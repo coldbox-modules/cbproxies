@@ -1,22 +1,29 @@
-component extends="coldbox.system.testing.BaseTestCase" appMapping="root" {
+/**
+ * My BDD Test
+ */
+component extends="testbox.system.BaseSpec"{
 
-	/*********************************** LIFE CYCLE Methods ***********************************/
+/*********************************** LIFE CYCLE Methods ***********************************/
 
+	/**
+	 * executes before all suites+specs in the run() method
+	 */
 	function beforeAll(){
-		super.beforeAll();
-		setup();
+
 	}
 
+	/**
+	 * executes after all suites+specs in the run() method
+	 */
 	function afterAll(){
-		super.afterAll();
+
 	}
 
 	/*********************************** BDD SUITES ***********************************/
 
-	function run(){
+	function run( testResults, testBox ){
+		// all your suites go here.
 		describe( "cbproxies", function(){
-			beforeEach( function( currentSpec ){
-			} );
 
 		} );
 	}
