@@ -2,21 +2,22 @@
  * Copyright Since 2005 ColdBox Framework by Luis Majano and Ortus Solutions, Corp
  * www.ortussolutions.com
  * ---
+ * Core Java proxies for creating dynamic proxies to the SDK
  */
 component {
 
 	// Module Properties
-	this.title 				= "@MODULE_NAME@";
+	this.title 				= "cbproxies";
 	this.author 			= "Ortus Solutions";
 	this.webURL 			= "https://www.ortussolutions.com";
-	this.description 		= "@MODULE_DESCRIPTION@";
+	this.description 		= "This module allows CFML apps to create dynamic proxies to core Java interfaces and preserve its environment when ran asynchronously.";
 	this.version 			= "@build.version@+@build.number@";
 
 	// Model Namespace
-	this.modelNamespace		= "@MODULE_SLUG@";
+	this.modelNamespace		= "cbproxies";
 
 	// CF Mapping
-	this.cfmapping			= "@MODULE_SLUG@";
+	this.cfmapping			= "cbproxies";
 
 	// Dependencies
 	this.dependencies 		= [];
@@ -25,9 +26,6 @@ component {
 	 * Configure Module
 	 */
 	function configure(){
-		settings = {
-
-		};
 	}
 
 	/**

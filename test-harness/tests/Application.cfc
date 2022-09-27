@@ -6,9 +6,9 @@
 component{
 
 	// The name of the module used in cfmappings ,etc
-	request.MODULE_NAME = "@MODULE_NAME@";
+	request.MODULE_NAME = "cbproxies";
 	// The directory name of the module on disk. Usually, it's the same as the module name
-	request.MODULE_PATH = "@MODULE_NAME@";
+	request.MODULE_PATH = "cbproxies";
 
 	// APPLICATION CFC PROPERTIES
 	this.name 				= "#request.MODULE_NAME# Testing Suite";
@@ -32,49 +32,11 @@ component{
 	this.mappings[ "/moduleroot" ] 				= moduleRootPath;
 	this.mappings[ "/#request.MODULE_NAME#" ] 	= moduleRootPath & "#request.MODULE_PATH#";
 
-	// ORM Definitions
-	/**
-	this.datasource = "coolblog";
-	this.ormEnabled = "true";
-	this.ormSettings = {
-		cfclocation = [ "/root/models" ],
-		logSQL = true,
-		dbcreate = "update",
-		secondarycacheenabled = false,
-		cacheProvider = "ehcache",
-		flushAtRequestEnd = false,
-		eventhandling = true,
-		eventHandler = "cborm.models.EventHandler",
-		skipcfcWithError = false
-	};
-	**/
-
 	function onRequestStart( required targetPage ){
-
-		// Set a high timeout for long running tests
-		setting requestTimeout="9999";
-		// New ColdBox Virtual Application Starter
-		request.coldBoxVirtualApp = new coldbox.system.testing.VirtualApp( appMapping = "/root" );
-
-		// If hitting the runner or specs, prep our virtual app
-		if ( getBaseTemplatePath().replace( expandPath( "/tests" ), "" ).reFindNoCase( "(runner|specs)" ) ) {
-			request.coldBoxVirtualApp.startup();
-		}
-
-		// ORM Reload for fresh results
-		if( structKeyExists( url, "fwreinit" ) ){
-			if( structKeyExists( server, "lucee" ) ){
-				pagePoolClear();
-			}
-			// ormReload();
-			request.coldBoxVirtualApp.restart();
-		}
-
 		return true;
 	}
 
 	public void function onRequestEnd( required targetPage ) {
-		request.coldBoxVirtualApp.shutdown();
 	}
 
     private boolean function shouldEnableFullNullSupport() {

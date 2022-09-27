@@ -5,13 +5,11 @@
     "private":true,
     "description":"",
     "dependencies":{
-        "coldbox":"^6.0.0"
     },
     "devDependencies":{
         "testbox":"*"
     },
     "installPaths":{
-        "coldbox":"coldbox",
         "testbox":"testbox"
     },
     "testbox":{

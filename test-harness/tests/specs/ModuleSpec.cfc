@@ -14,7 +14,7 @@ component extends="coldbox.system.testing.BaseTestCase" appMapping="root" {
 	/*********************************** BDD SUITES ***********************************/
 
 	function run(){
-		describe( "MockData CFC", function(){
+		describe( "cbproxies", function(){
 			beforeEach( function( currentSpec ){
 			} );
 
