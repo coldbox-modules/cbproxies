@@ -29,34 +29,24 @@ component accessors="true" {
 	property name="target";
 
 	/**
-	 * This is a function/closure that is called at runtime and must return a boolean value.
-	 * If the return value is true, then the app context is loaded/unloaded as normal
-	 * If the return value is false, then the app context is not loaded
-	 * This is useful when doing streams or anything that ONLY needs to be loaded/unloaded if ran async
-	 */
-	property name="contextConstraint";
-
-	/**
 	 * Constructor
 	 *
-	 * @target            The target function to be applied via dynamic proxy to the required Java interface(s)
-	 * @debug             Add debugging messages for monitoring
-	 * @loadAppContext    By default, we load the Application context into the running thread. If you don't need it, then don't load it.
-	 * @contextConstraint A closure/function that will be called before the app context is loaded/unloaded. If the return value is true, it allows execution, else it skips.
+	 * @target         The target function to be applied via dynamic proxy to the required Java interface(s)
+	 * @debug          Add debugging messages for monitoring
+	 * @loadAppContext By default, we load the Application context into the running thread. If you don't need it, then don't load it.
 	 */
 	function init(
 		required target,
 		boolean debug          = false,
-		boolean loadAppContext = true,
-		contextConstraint      = ""
+		boolean loadAppContext = true
 	){
-		variables.System            = createObject( "java", "java.lang.System" );
-		variables.Thread            = createObject( "java", "java.lang.Thread" );
-		variables.debug             = arguments.debug;
-		variables.target            = arguments.target;
-		variables.UUID              = createUUID();
-		variables.loadAppContext    = arguments.loadAppContext;
-		variables.contextConstraint = arguments.contextConstraint;
+		variables.System         = createObject( "java", "java.lang.System" );
+		variables.Thread         = createObject( "java", "java.lang.Thread" );
+		variables.debug          = arguments.debug;
+		variables.target         = arguments.target;
+		variables.UUID           = createUUID();
+		variables.loadAppContext = arguments.loadAppContext;
+		variables.threadHashCode = getCurrentThread().hashCode();
 
 		// If loading App context or not
 		if ( arguments.loadAppContext ) {
@@ -76,13 +66,6 @@ component accessors="true" {
 		}
 
 		return this;
-	}
-
-	/**
-	 * Verifies if the constraint has been loaded
-	 */
-	function isConstraintLoaded(){
-		return isCustomFunction( variables.contextConstraint ) || isClosure( variables.contextConstraint );
 	}
 
 	/**
@@ -111,14 +94,8 @@ component accessors="true" {
 	 * Ability to load the context into the running thread
 	 */
 	function loadContext(){
-		// Are we loading the context or not?
-		if ( !variables.loadAppContext ) {
-			return;
-		}
-
-		// Are we constrained?
-		if ( isConstraintLoaded() && !variables.contextConstraint() ) {
-			// out( "==> App context loading constrained: skipping on #getCurrentThread().toString()#" );
+		// Are we loading the context or not? Or we are in the same running main thread
+		if ( !variables.loadAppContext || variables.threadHashCode == getCurrentThread().hashCode() ) {
 			return;
 		}
 
@@ -152,15 +129,16 @@ component accessors="true" {
 				// Create a fake page to run this thread in and link it to the fake page context and fusion context
 				var page             = variables.originalPage._clone();
 				page.pageContext     = pageContext;
-				page.pageContext     = pageContext;
 				fusionContext.parent = page;
 
 				// Set the current context of execution now
+				pageContext.setPage( page );
 				pageContext.initializeWith(
 					page,
 					pageContext,
 					pageContext.getVariableScope()
 				);
+				fusionContext.setAsyncThread( true );
 			}
 		} catch ( any e ) {
 			err( "Error loading context #e.toString()#" );
@@ -177,14 +155,8 @@ component accessors="true" {
 	 * Ability to unload the context out of the running thread
 	 */
 	function unLoadContext(){
-		// Are we loading the context or not?
-		if ( !variables.loadAppContext ) {
-			return;
-		}
-
-		// Are we constrained?
-		if ( isConstraintLoaded() && !variables.contextConstraint() ) {
-			// out( "==> App context unloading constrained: skipping on #getCurrentThread().toString()#" );
+		// Are we loading the context or not? Or we are in the same running main thread
+		if ( !variables.loadAppContext || variables.threadHashCode == getCurrentThread().hashCode() ) {
 			return;
 		}
 
