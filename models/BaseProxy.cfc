@@ -29,23 +29,34 @@ component accessors="true" {
 	property name="target";
 
 	/**
+	 * This is a function/closure that is called at runtime and must return a boolean value.
+	 * If the return value is true, then the app context is loaded/unloaded as normal
+	 * If the return value is false, then the app context is not loaded
+	 * This is useful when doing streams or anything that ONLY needs to be loaded/unloaded if ran async
+	 */
+	property name="contextConstraint";
+
+	/**
 	 * Constructor
 	 *
-	 * @target         The target function to be applied via dynamic proxy to the required Java interface(s)
-	 * @debug          Add debugging messages for monitoring
-	 * @loadAppContext By default, we load the Application context into the running thread. If you don't need it, then don't load it.
+	 * @target            The target function to be applied via dynamic proxy to the required Java interface(s)
+	 * @debug             Add debugging messages for monitoring
+	 * @loadAppContext    By default, we load the Application context into the running thread. If you don't need it, then don't load it.
+	 * @contextConstraint A closure/function that will be called before the app context is loaded/unloaded. If the return value is true, it allows execution, else it skips.
 	 */
 	function init(
 		required target,
 		boolean debug          = false,
-		boolean loadAppContext = true
+		boolean loadAppContext = true,
+		contextConstraint      = ""
 	){
-		variables.System         = createObject( "java", "java.lang.System" );
-		variables.Thread         = createObject( "java", "java.lang.Thread" );
-		variables.debug          = arguments.debug;
-		variables.target         = arguments.target;
-		variables.UUID           = createUUID();
-		variables.loadAppContext = arguments.loadAppContext;
+		variables.System            = createObject( "java", "java.lang.System" );
+		variables.Thread            = createObject( "java", "java.lang.Thread" );
+		variables.debug             = arguments.debug;
+		variables.target            = arguments.target;
+		variables.UUID              = createUUID();
+		variables.loadAppContext    = arguments.loadAppContext;
+		variables.contextConstraint = arguments.contextConstraint;
 
 		// If loading App context or not
 		if ( arguments.loadAppContext ) {
@@ -65,6 +76,13 @@ component accessors="true" {
 		}
 
 		return this;
+	}
+
+	/**
+	 * Verifies if the constraint has been loaded
+	 */
+	function isConstraintLoaded(){
+		return isCustomFunction( variables.contextConstraint ) || isClosure( variables.contextConstraint );
 	}
 
 	/**
@@ -95,6 +113,12 @@ component accessors="true" {
 	function loadContext(){
 		// Are we loading the context or not?
 		if ( !variables.loadAppContext ) {
+			return;
+		}
+
+		// Are we constrained?
+		if ( isConstraintLoaded() && !variables.contextConstraint() ) {
+			// out( "==> App context loading constrained: skipping on #getCurrentThread().toString()#" );
 			return;
 		}
 
@@ -158,6 +182,12 @@ component accessors="true" {
 			return;
 		}
 
+		// Are we constrained?
+		if ( isConstraintLoaded() && !variables.contextConstraint() ) {
+			// out( "==> App context unloading constrained: skipping on #getCurrentThread().toString()#" );
+			return;
+		}
+
 		// out( "==> Removing context for thread: #getCurrentThread().toString()#." );
 
 		try {
@@ -205,8 +235,8 @@ component accessors="true" {
 	}
 
 	/**
-	* Check if your are using the fork join pool or cfthread.
-	*/
+	 * Check if your are using the fork join pool or cfthread.
+	 */
 	boolean function inForkJoinPool(){
 		return ( findNoCase( "ForkJoinPool", getThreadName() ) NEQ 0 );
 	}

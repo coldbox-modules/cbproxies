@@ -2,7 +2,7 @@ component extends="Supplier" {
 
 	/**
 	 * Functional interface for supplier to get a result
-	 * See https://docs.oracle.com/javase/8/docs/api/java/util/function/Supplier.html
+	 * See https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/Callable.html
 	 */
 	function call(){
 		loadContext();
