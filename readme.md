@@ -1,4 +1,6 @@
-# CBPROXIES
+[![cbproxies CI](https://github.com/coldbox-modules/cbproxies/actions/workflows/ci.yml/badge.svg)](https://github.com/coldbox-modules/cbproxies/actions/workflows/ci.yml)
+
+# cbproxies
 
 The `cbproxies` module is a raw library that allows you to build Java dynamic proxies to several key classes that allows CFML to do concurrency, streaming, and much more.  The `BaseProxy` can also be used so you can extend the module and create your own concrete dynamic proxies that extend the `BaseProxy`.
 
