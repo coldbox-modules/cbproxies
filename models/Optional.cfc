@@ -125,7 +125,10 @@ component accessors="true" {
 	 */
 	Optional function filter( required predicate ){
 		variables.jOptional = variables.jOptional.filter(
-			createDynamicProxy( new cbproxies.models.Predicate( arguments.predicate ), [ "java.util.function.Predicate" ] )
+			createDynamicProxy(
+				new cbproxies.models.Predicate( arguments.predicate ),
+				[ "java.util.function.Predicate" ]
+			)
 		);
 		return this;
 	}
@@ -139,7 +142,10 @@ component accessors="true" {
 	 */
 	Optional function map( required mapper ){
 		variables.jOptional = variables.jOptional.map(
-			createDynamicProxy( new cbproxies.models.Function( arguments.mapper ), [ "java.util.function.Function" ] )
+			createDynamicProxy(
+				new cbproxies.models.Function( arguments.mapper ),
+				[ "java.util.function.Function" ]
+			)
 		);
 		return this;
 	}
