@@ -7,14 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ----
 
+## [Unreleased]
+
+### Added
+
+- Updated github actions
+- Updated changelog builds
+
 ## [1.0.1] => 2022-SEP-29
 
 ### Fixed
 
-* Fixing `snapshot` left over on release box.json
-
-----
+- Fixing `snapshot` left over on release box.json
 
 ## [1.0.0] => 2022-SEP-29
 
-* First iteration of this module
+- First iteration of this module
