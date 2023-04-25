@@ -213,4 +213,43 @@ component accessors="true" {
 		return ( findNoCase( "ForkJoinPool", getThreadName() ) NEQ 0 );
 	}
 
+	void function sendExceptionToLogBoxIfAvailable( required any exception ){
+		if ( !variables.loadAppContext ) {
+			return;
+		}
+
+		if ( !structKeyExists( application, "cbController" ) ) {
+			return;
+		}
+
+		try {
+			application.cbController
+				.getLogBox()
+				.getRootLogger()
+				.error( arguments.exception.message, arguments.exception );
+		} catch ( any e ) {
+			err( "Error trying to send exception to LogBox: #e.message & e.detail#" );
+			err( "Stacktrace trying to send exception to LogBox: #e.stackTrace#" );
+		}
+	}
+
+	void function sendExceptionToOnExceptionIfAvailable( required any exception ){
+		if ( !variables.loadAppContext ) {
+			return;
+		}
+
+		if ( !structKeyExists( application, "cbController" ) ) {
+			return;
+		}
+
+		try {
+			application.cbController
+				.getInterceptorService()
+				.announce( "onException", { exception : arguments.exception } );
+		} catch ( any e ) {
+			err( "Error trying to announce exception to the ColdBox onException interception point: #e.message & e.detail#" );
+			err( "Stacktrace announcing exception to the ColdBox onException interception point: #e.stackTrace#" );
+		}
+	}
+
 }
