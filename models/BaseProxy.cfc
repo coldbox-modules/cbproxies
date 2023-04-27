@@ -218,12 +218,12 @@ component accessors="true" {
 			return;
 		}
 
-		if ( !structKeyExists( application, "cbController" ) ) {
+		if ( !structKeyExists( application, "wirebox" ) ) {
 			return;
 		}
 
 		try {
-			application.cbController
+			application.wirebox
 				.getLogBox()
 				.getRootLogger()
 				.error( arguments.exception.message, arguments.exception );
@@ -238,13 +238,13 @@ component accessors="true" {
 			return;
 		}
 
-		if ( !structKeyExists( application, "cbController" ) ) {
+		if ( !structKeyExists( application, "wirebox" ) ) {
 			return;
 		}
 
 		try {
-			application.cbController
-				.getInterceptorService()
+			application.wirebox
+				.getEventManager()
 				.announce( "onException", { exception : arguments.exception } );
 		} catch ( any e ) {
 			err( "Error trying to announce exception to the ColdBox onException interception point: #e.message & e.detail#" );
