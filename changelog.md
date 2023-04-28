@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Updated github actions
 - Updated changelog builds
+- Add in LogBox and onException errors if available for all proxies #1
 
 ## [1.0.1] => 2022-SEP-29
 
