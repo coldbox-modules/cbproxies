@@ -243,11 +243,11 @@ component accessors="true" {
 		}
 
 		try {
-			application.wirebox
-				.getEventManager()
-				.announce( "onException", { exception : arguments.exception } );
+			application.wirebox.getEventManager().announce( "onException", { exception : arguments.exception } );
 		} catch ( any e ) {
-			err( "Error trying to announce exception to the ColdBox onException interception point: #e.message & e.detail#" );
+			err(
+				"Error trying to announce exception to the ColdBox onException interception point: #e.message & e.detail#"
+			);
 			err( "Stacktrace announcing exception to the ColdBox onException interception point: #e.stackTrace#" );
 		}
 	}
