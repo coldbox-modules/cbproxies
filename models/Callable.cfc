@@ -18,6 +18,8 @@ component extends="Supplier" {
 			// Log it, so it doesn't go to ether
 			err( "Error running Callable: #e.message & e.detail#" );
 			err( "Stacktrace for Callable: #e.stackTrace#" );
+			sendExceptionToLogBoxIfAvailable( e );
+			sendExceptionToOnExceptionIfAvailable( e );
 			rethrow;
 		} finally {
 			unLoadContext();

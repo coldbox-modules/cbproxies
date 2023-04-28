@@ -31,6 +31,8 @@ component extends="BaseProxy" {
 			// Log it, so it doesn't go to ether
 			err( "Error running BiFunction: #e.message & e.detail#" );
 			err( "Stacktrace for BiFunction: #e.stackTrace#" );
+			sendExceptionToLogBoxIfAvailable( e );
+			sendExceptionToOnExceptionIfAvailable( e );
 			rethrow;
 		} finally {
 			unLoadContext();

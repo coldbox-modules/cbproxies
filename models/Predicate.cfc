@@ -36,6 +36,8 @@ component extends="BaseProxy" {
 			// Log it, so it doesn't go to ether
 			err( "Error running Predicate: #e.message & e.detail#" );
 			err( "Stacktrace for Predicate: #e.stackTrace#" );
+			sendExceptionToLogBoxIfAvailable( e );
+			sendExceptionToOnExceptionIfAvailable( e );
 			rethrow;
 		} finally {
 			unLoadContext();

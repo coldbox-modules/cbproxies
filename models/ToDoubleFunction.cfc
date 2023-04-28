@@ -27,6 +27,8 @@ component extends="BaseProxy" {
 			// Log it, so it doesn't go to ether
 			err( "Error running ToDoubleFunction: #e.message & e.detail#" );
 			err( "Stacktrace for ToDoubleFunction: #e.stackTrace#" );
+			sendExceptionToLogBoxIfAvailable( e );
+			sendExceptionToOnExceptionIfAvailable( e );
 			rethrow;
 		} finally {
 			unLoadContext();

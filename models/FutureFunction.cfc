@@ -31,6 +31,8 @@ component extends="Function" {
 			// Log it, so it doesn't go to ether
 			err( "Error running FutureFunction: #e.message & e.detail#" );
 			err( "Stacktrace for FutureFunction: #e.stackTrace#" );
+			sendExceptionToLogBoxIfAvailable( e );
+			sendExceptionToOnExceptionIfAvailable( e );
 			rethrow;
 		} finally {
 			unLoadContext();

@@ -28,6 +28,8 @@ component extends="BaseProxy" {
 			// Log it, so it doesn't go to ether
 			err( "Error running BiConsumer: #e.message & e.detail#" );
 			err( "Stacktrace for BiConsumer: #e.stackTrace#" );
+			sendExceptionToLogBoxIfAvailable( e );
+			sendExceptionToOnExceptionIfAvailable( e );
 			rethrow;
 		} finally {
 			unLoadContext();
