@@ -14,7 +14,12 @@ component extends="Function" {
 		try {
 			lock name="#getConcurrentEngineLockName()#" type="exclusive" timeout="60" {
 				var oFuture = variables.target( arguments.t );
-				if ( isNull( local.oFuture ) || !isStruct( oFuture ) || !structKeyExists( local.oFuture, "getNative" ) ) {
+				if (
+					isNull( local.oFuture ) || !isStruct( oFuture ) || !structKeyExists(
+						local.oFuture,
+						"getNative"
+					)
+				) {
 					throw(
 						type    = "IllegalFutureException",
 						message = "The return of the function is NOT a ColdBox Future"
@@ -26,6 +31,8 @@ component extends="Function" {
 			// Log it, so it doesn't go to ether
 			err( "Error running FutureFunction: #e.message & e.detail#" );
 			err( "Stacktrace for FutureFunction: #e.stackTrace#" );
+			sendExceptionToLogBoxIfAvailable( e );
+			sendExceptionToOnExceptionIfAvailable( e );
 			rethrow;
 		} finally {
 			unLoadContext();

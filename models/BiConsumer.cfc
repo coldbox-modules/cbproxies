@@ -22,12 +22,14 @@ component extends="BaseProxy" {
 		loadContext();
 		try {
 			lock name="#getConcurrentEngineLockName()#" type="exclusive" timeout="60" {
-				variables.target( arguments.t ?: javaCast( "null", "" ), arguments.u ?: javaCast( "null", "" ) );
+				variables.target( arguments.t ?: javacast( "null", "" ), arguments.u ?: javacast( "null", "" ) );
 			}
 		} catch ( any e ) {
 			// Log it, so it doesn't go to ether
 			err( "Error running BiConsumer: #e.message & e.detail#" );
 			err( "Stacktrace for BiConsumer: #e.stackTrace#" );
+			sendExceptionToLogBoxIfAvailable( e );
+			sendExceptionToOnExceptionIfAvailable( e );
 			rethrow;
 		} finally {
 			unLoadContext();

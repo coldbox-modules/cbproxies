@@ -1,4 +1,21 @@
-# CBPROXIES
+<p align="center">
+	<img src="https://www.ortussolutions.com/__media/coldbox-185-logo.png">
+	<br>
+	<img src="https://www.ortussolutions.com/__media/wirebox-185.png" height="125">
+	<img src="https://www.ortussolutions.com/__media/cachebox-185.png" height="125" >
+	<img src="https://www.ortussolutions.com/__media/logbox-185.png"  height="125">
+</p>
+
+<p align="center">
+	Copyright Since 2005 ColdBox Platform by Luis Majano and Ortus Solutions, Corp
+	<br>
+	<a href="https://www.coldbox.org">www.coldbox.org</a> |
+	<a href="https://www.ortussolutions.com">www.ortussolutions.com</a>
+</p>
+
+----
+
+# cbproxies
 
 The `cbproxies` module is a raw library that allows you to build Java dynamic proxies to several key classes that allows CFML to do concurrency, streaming, and much more.  The `BaseProxy` can also be used so you can extend the module and create your own concrete dynamic proxies that extend the `BaseProxy`.
 

@@ -7,20 +7,20 @@
 component {
 
 	// Module Properties
-	this.title 				= "cbproxies";
-	this.author 			= "Ortus Solutions";
-	this.webURL 			= "https://www.ortussolutions.com";
-	this.description 		= "This module allows CFML apps to create dynamic proxies to core Java interfaces and preserve its environment when ran asynchronously.";
-	this.version 			= "@build.version@+@build.number@";
+	this.title       = "cbproxies";
+	this.author      = "Ortus Solutions";
+	this.webURL      = "https://www.ortussolutions.com";
+	this.description = "This module allows CFML apps to create dynamic proxies to core Java interfaces and preserve its environment when ran asynchronously.";
+	this.version     = "@build.version@+@build.number@";
 
 	// Model Namespace
-	this.modelNamespace		= "cbproxies";
+	this.modelNamespace = "cbproxies";
 
 	// CF Mapping
-	this.cfmapping			= "cbproxies";
+	this.cfmapping = "cbproxies";
 
 	// Dependencies
-	this.dependencies 		= [];
+	this.dependencies = [];
 
 	/**
 	 * Configure Module
@@ -32,14 +32,12 @@ component {
 	 * Fired when the module is registered and activated.
 	 */
 	function onLoad(){
-
 	}
 
 	/**
 	 * Fired when the module is unregistered and unloaded
 	 */
 	function onUnload(){
-
 	}
 
 }
