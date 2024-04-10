@@ -13,6 +13,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Better engine recognition in base proxy
+- Added Adobe 2023 support
+
+## [1.1.0] - 2023-04-28
+
+### Added
+
 - Updated github actions
 - Updated changelog builds
 - Add in LogBox and onException errors if available for all proxies #1
