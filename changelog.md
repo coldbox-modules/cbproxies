@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Better engine recognition in base proxy
+- Added Adobe 2023 support
+
 ## [1.1.0] - 2023-04-28
 
 ### Added
