@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2024-04-10
+
 ## [1.1.0] - 2023-04-28
 
 ### Added
@@ -34,6 +36,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - First iteration of this module
 
-[Unreleased]: https://github.com/coldbox-modules/cbproxies/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/coldbox-modules/cbproxies/compare/v1.2.0...HEAD
+
+[1.2.0]: https://github.com/coldbox-modules/cbproxies/compare/v1.1.0...v1.2.0
 
 [1.1.0]: https://github.com/coldbox-modules/cbproxies/compare/cdf15f9ab43d3cc79ac41b336bfe67f75f17ae06...v1.1.0
