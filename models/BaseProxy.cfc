@@ -48,11 +48,12 @@ component accessors="true" {
 		variables.loadAppContext = arguments.loadAppContext;
 		variables.threadHashCode = getCurrentThread().hashCode();
 
-		variables.isLucee = server.keyExists( "lucee" );
-		variables.isAdobe = server.keyExists( "coldfusion" ) && server.coldfusion.productName.findNocase( "ColdFusion" ) > 0;
+		variables.isAdobe   = server.keyExists( "coldfusion" ) && server.coldfusion.productName.findNocase( "ColdFusion" ) > 0;
+		variables.isBoxLang = server.keyExists( "boxlang" );
+		variables.isLucee   = server.keyExists( "lucee" );
 
 		// If loading App context or not
-		if ( arguments.loadAppContext ) {
+		if ( arguments.loadAppContext && !variables.isBoxLang ) {
 			if ( variables.isLucee ) {
 				variables.cfContext   = getCFMLContext().getApplicationContext();
 				variables.pageContext = getCFMLContext();
@@ -97,8 +98,11 @@ component accessors="true" {
 	 * Ability to load the context into the running thread
 	 */
 	function loadContext(){
-		// Are we loading the context or not? Or we are in the same running main thread
-		if ( !variables.loadAppContext || variables.threadHashCode == getCurrentThread().hashCode() ) {
+		// If we are in BoxLang, exit out as context is handled differently.
+		// Or Are we loading the context or not? Or we are in the same running main thread
+		if (
+			variables.isBoxLang || !variables.loadAppContext || variables.threadHashCode == getCurrentThread().hashCode()
+		) {
 			return;
 		}
 
@@ -158,8 +162,11 @@ component accessors="true" {
 	 * Ability to unload the context out of the running thread
 	 */
 	function unLoadContext(){
+		// If we are in BoxLang, exit out as context is handled differently.
 		// Are we loading the context or not? Or we are in the same running main thread
-		if ( !variables.loadAppContext || variables.threadHashCode == getCurrentThread().hashCode() ) {
+		if (
+			variables.isBoxLang || !variables.loadAppContext || variables.threadHashCode == getCurrentThread().hashCode()
+		) {
 			return;
 		}
 
