@@ -18,21 +18,13 @@ component extends="BaseProxy" {
 	 * Functional interface for the apply functionional interface
 	 */
 	function applyAsDouble( required value ){
-		loadContext();
-		try {
-			lock name="#getConcurrentEngineLockName()#" type="exclusive" timeout="60" {
-				return variables.target( arguments.value );
-			}
-		} catch ( any e ) {
-			// Log it, so it doesn't go to ether
-			err( "Error running ToDoubleFunction: #e.message & e.detail#" );
-			err( "Stacktrace for ToDoubleFunction: #e.stackTrace#" );
-			sendExceptionToLogBoxIfAvailable( e );
-			sendExceptionToOnExceptionIfAvailable( e );
-			rethrow;
-		} finally {
-			unLoadContext();
-		}
+		return execute(
+			( struct args ) => {
+				return variables.target( args.value );
+			},
+			"ToDoubleFunction",
+			arguments
+		);
 	}
 
 }

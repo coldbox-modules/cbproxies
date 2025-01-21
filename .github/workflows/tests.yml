@@ -20,6 +20,10 @@ jobs:
       matrix:
         cfengine: [ "lucee@5", "adobe@2018", "adobe@2021", "adobe@2023" ]
         experimental: [ false ]
+        include:
+          - coldboxVersion: "be"
+            cfengine: "boxlang@1"
+            experimental: true
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -58,6 +62,7 @@ jobs:
         run: |
           box install
           cd test-harness
+          box package set dependencies.coldbox=${{ matrix.coldboxVersion }}
           box install
 
       - name: Start ${{ matrix.cfengine }} Server

@@ -12,12 +12,6 @@ component extends="BaseProxy" {
 	function init( required f ){
 		super.init( arguments.f );
 
-		// Stupid ACF Compiler
-		variables[ "and" ] = variables[ "$and" ];
-		variables[ "or" ]  = variables[ "$or" ];
-		this[ "and" ]      = variables[ "$and" ];
-		this[ "or" ]       = variables[ "$or" ];
-
 		return this;
 	}
 
@@ -27,33 +21,13 @@ component extends="BaseProxy" {
 	 * @t
 	 */
 	boolean function test( required t ){
-		loadContext();
-		try {
-			lock name="#getConcurrentEngineLockName()#" type="exclusive" timeout="60" {
-				return variables.target( arguments.t );
-			}
-		} catch ( any e ) {
-			// Log it, so it doesn't go to ether
-			err( "Error running Predicate: #e.message & e.detail#" );
-			err( "Stacktrace for Predicate: #e.stackTrace#" );
-			sendExceptionToLogBoxIfAvailable( e );
-			sendExceptionToOnExceptionIfAvailable( e );
-			rethrow;
-		} finally {
-			unLoadContext();
-		}
-	}
-
-
-	function isEqual( targetRef ){
-	}
-
-	function negate(){
-	}
-
-	function $and( other ){
-	}
-	function $or( other ){
+		return execute(
+			( struct args ) => {
+				return variables.target( args.t );
+			},
+			"Predicate",
+			arguments
+		);
 	}
 
 }

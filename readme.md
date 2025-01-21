@@ -69,6 +69,10 @@ Here is a table of the available proxies in this module:
 | `ToIntFunction` 		| `java.util.function.ToIntFunction` |
 | `ToLongFunction` 		| `java.util.function.ToLongFunction` |
 
+## System requirements
+* [Boxlang](https://www.boxlang.io/)
+* Adobe 2018+
+* Lucee 5
 
 ********************************************************************************
 Copyright Since 2005 ColdBox Framework by Luis Majano and Ortus Solutions, Corp

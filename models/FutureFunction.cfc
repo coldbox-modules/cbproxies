@@ -10,10 +10,9 @@ component extends="Function" {
 	 * I have to use it like this because `super` does not work on ACF in a proxy
 	 */
 	function apply( t ){
-		loadContext();
-		try {
-			lock name="#getConcurrentEngineLockName()#" type="exclusive" timeout="60" {
-				var oFuture = variables.target( arguments.t );
+		return execute(
+			( struct args ) => {
+				var oFuture = variables.target( args.t );
 				if (
 					isNull( local.oFuture ) || !isStruct( oFuture ) || !structKeyExists(
 						local.oFuture,
@@ -22,21 +21,14 @@ component extends="Function" {
 				) {
 					throw(
 						type    = "IllegalFutureException",
-						message = "The return of the function is NOT a ColdBox Future"
+						message = "The return of the function [#oFuture.getClass().getName() ?: "null"#] is NOT a ColdBox Future"
 					);
 				}
 				return local.oFuture.getNative();
-			}
-		} catch ( any e ) {
-			// Log it, so it doesn't go to ether
-			err( "Error running FutureFunction: #e.message & e.detail#" );
-			err( "Stacktrace for FutureFunction: #e.stackTrace#" );
-			sendExceptionToLogBoxIfAvailable( e );
-			sendExceptionToOnExceptionIfAvailable( e );
-			rethrow;
-		} finally {
-			unLoadContext();
-		}
+			},
+			"FutureFunction",
+			arguments
+		);
 	}
 
 }
