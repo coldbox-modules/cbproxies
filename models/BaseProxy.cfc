@@ -48,12 +48,12 @@ component accessors="true" {
 		variables.loadAppContext = arguments.loadAppContext;
 		variables.threadHashCode = getCurrentThread().hashCode();
 
-		variables.isAdobe   = server.keyExists( "coldfusion" ) && server.coldfusion.productName.findNocase( "ColdFusion" ) > 0;
 		variables.isBoxLang = server.keyExists( "boxlang" );
-		variables.isLucee   = server.keyExists( "lucee" );
+		variables.isAdobe   = !variables.isBoxLang && server.keyExists( "coldfusion" ) && server.coldfusion.keyExists( "productName" ) &&  server.coldfusion.productName.findNocase( "ColdFusion" ) > 0;
+		variables.isLucee   = !variables.isBoxLang && server.keyExists( "lucee" );
 
 		// If loading App context or not
-		if ( arguments.loadAppContext && !variables.isBoxLang ) {
+		if ( arguments.loadAppContext ) {
 			if ( variables.isLucee ) {
 				variables.cfContext   = getCFMLContext().getApplicationContext();
 				variables.pageContext = getCFMLContext();
@@ -65,6 +65,8 @@ component accessors="true" {
 				variables.originalAppScope      = variables.originalFusionContext.getAppHelper().getAppScope();
 				variables.originalPageContext   = getCFMLContext();
 				variables.originalPage          = variables.originalPageContext.getPage();
+			} else if( variables.isBoxLang ) {
+				variables.boxContext = getBoxContext();
 			}
 			// out( "==> Storing contexts for thread: #getCurrentThread().toString()#." );
 		}
@@ -73,46 +75,56 @@ component accessors="true" {
 	}
 
 	/**
-	 * Get the current thread java object
+	 * Wrapper for the actual execution of each proxy to consolidate logic 
+	 * and error handling
+	 * 
+	 * @callback The callback to execute (receives the args)
+	 * @className The name of the class being executed (for error handling/logging)
+	 * @args The arguments to pass to the callback
 	 */
-	function getCurrentThread(){
-		return variables.Thread.currentThread();
-	}
-
-	/**
-	 * Get the current thread name
-	 */
-	function getThreadName(){
-		return getCurrentThread().getName();
-	}
-
-	/**
-	 * This function is used for the engine to compile the page context bif into the page scope,
-	 * if not, we don't get access to it.
-	 */
-	function getCFMLContext(){
-		return getPageContext();
-	}
-
-	/**
-	 * Ability to load the context into the running thread
-	 */
-	function loadContext(){
-		// If we are in BoxLang, exit out as context is handled differently.
-		// Or Are we loading the context or not? Or we are in the same running main thread
-		if (
-			variables.isBoxLang || !variables.loadAppContext || variables.threadHashCode == getCurrentThread().hashCode()
-		) {
-			return;
-		}
-
-		// out( "==> Context NOT loaded for thread: #getCurrentThread().toString()# loading it..." );
-
+	private function execute( required Function callback, required string className, struct args={} ) {
 		try {
-			// Lucee vs Adobe Implementations
-			if ( variables.isLucee ) {
-				getCFMLContext().setApplicationContext( variables.cfContext );
-			} else if ( variables.isAdobe ) {
+			if( isAdobe ) {
+				return executeAdobe( ()=>callback(args) );
+			} else if( isLucee ) {
+				return executeLucee( ()=>callback(args) );
+			} else if( isBoxLang ) {
+				return executeBoxLang( ()=>callback(args) );
+			} else {
+				throw( "Unsupported CFML engine" );
+			}
+		} catch ( any e ) {
+			// Log it, so it doesn't go to ether
+			err( "Error running #className#: #e.message & e.detail#" );
+			err( "Stacktrace for #className#: #e.stackTrace#" );
+			sendExceptionToLogBoxIfAvailable( e );
+			sendExceptionToOnExceptionIfAvailable( e );
+			rethrow;
+		}
+	}
+
+	private function executeLucee( required Function callback ) {
+		if( performContextManagement() ) {
+			getCFMLContext().setApplicationContext( variables.cfContext );
+			// TODO: We're not setting the page context, so no request variables are available.
+			// There were initially issues with thread safety in cloning the page context. We should revisit that.
+		}		
+		return callback();
+		// Lucee has no "unload" logic
+	}
+
+	private function executeAdobe( required Function callback ) {
+		/*
+		* Engine-specific lock name. For Adobe, lock is shared for this CFC instance.  On Lucee, it is random (i.e. not locked).
+		* This singlethreading on Adobe is to workaround a thread safety issue in the PageContext that needs fixed.
+		* Amend this check once Adobe fixes this in a later update
+		*/
+		lock name="#variables.UUID#" type="exclusive" timeout="60" {
+			if( !performContextManagement() ) {
+				return callback();
+			}
+			try {
+				
 				// Set the current thread's class loader from the CF space to avoid
 				// No class defined issues in thread land.
 				getCurrentThread().setContextClassLoader(
@@ -146,42 +158,47 @@ component accessors="true" {
 					pageContext.getVariableScope()
 				);
 				fusionContext.setAsyncThread( true );
-			}
-		} catch ( any e ) {
-			err( "Error loading context #e.toString()#" );
-			writeDump(
-				var    = [ createObject( "java", "coldfusion.filter.FusionContext" ).getCurrent() ],
-				output = "console",
-				label  = "FusionContext Exception - Get Current",
-				top    = 5
-			);
-		}
-	}
 
-	/**
-	 * Ability to unload the context out of the running thread
-	 */
-	function unLoadContext(){
-		// If we are in BoxLang, exit out as context is handled differently.
-		// Are we loading the context or not? Or we are in the same running main thread
-		if (
-			variables.isBoxLang || !variables.loadAppContext || variables.threadHashCode == getCurrentThread().hashCode()
-		) {
-			return;
-		}
-
-		// out( "==> Removing context for thread: #getCurrentThread().toString()#." );
-
-		try {
-			// Lucee vs Adobe Implementations
-			if ( variables.isAdobe ) {
+				return callback();
+			} finally {
 				// Ensure any DB connections used get returned to the connection pool. Without clearSqlProxy an executor will hold onto any connections it touched while running and they will not timeout/close, and no other code can use the connection except for the executor that last touched it.   Credit to Brad Wood for finding this!
 				variables.DataSrcImplStatic.clearSqlProxy();
 				variables.fusionContextStatic.setCurrent( javacast( "null", "" ) );
 			}
-		} catch ( any e ) {
-			err( "Error Unloading context #e.toString()#" );
 		}
+	}
+
+	private function executeBoxLang( required Function callback ) {
+		if( !performContextManagement() ) {
+			return callback();
+		}
+		return runThreadInContext( context=variables.boxContext, callback=arguments.callback );
+	}
+
+	/**
+	 * Get the current thread java object
+	 */
+	function getCurrentThread(){
+		return variables.Thread.currentThread();
+	}
+
+	Boolean function performContextManagement() {
+		return variables.loadAppContext &&  variables.threadHashCode != getCurrentThread().hashCode();
+	}
+
+	/**
+	 * Get the current thread name
+	 */
+	function getThreadName(){
+		return getCurrentThread().getName();
+	}
+
+	/**
+	 * This function is used for the engine to compile the page context bif into the page scope,
+	 * if not, we don't get access to it.
+	 */
+	function getCFMLContext(){
+		return getPageContext();
 	}
 
 	/**
@@ -200,19 +217,6 @@ component accessors="true" {
 	 */
 	function err( required var ){
 		variables.System.err.println( arguments.var.toString() );
-	}
-
-	/**
-	 * Engine-specific lock name. For Adobe, lock is shared for this CFC instance.  On Lucee, it is random (i.e. not locked).
-	 * This singlethreading on Adobe is to workaround a thread safety issue in the PageContext that needs fixed.
-	 * Amend this check once Adobe fixes this in a later update
-	 */
-	function getConcurrentEngineLockName(){
-		if ( variables.isAdobe ) {
-			return variables.UUID;
-		} else {
-			return createUUID();
-		}
 	}
 
 	/**

@@ -21,7 +21,7 @@ component extends="testbox.system.BaseSpec" {
 
 	function run( testResults, testBox ){
 		// all your suites go here.
-		describe( "cbproxies", function(){
+		describe( "cbproxies creation", function(){
 			it( "can create a BiConsumer", function(){
 				var results = false;
 				var proxy   = new cbproxies.models.BiConsumer( function( a, b ){
@@ -171,6 +171,25 @@ component extends="testbox.system.BaseSpec" {
 				var jProxy = createDynamicProxy( proxy, [ "java.util.concurrent.Callable" ] );
 				expect( jProxy.call() ).toBeTrue();
 			} );
+		
+		} );
+
+		describe( "cbproxies threaded execution", function(){
+
+			it( "can create a Runnable in another thread", function(){
+				application.results = false;
+
+				var proxy   = new cbproxies.models.Runnable( function(){
+					createObject( 'java', 'java.lang.System' ).out.println( "Runnable running from thread #createObject( 'java', 'java.lang.Thread' ).currentThread().getName()#" )
+					application.results = true;
+				} );
+				var jProxy = createDynamicProxy( proxy, [ "java.lang.Runnable" ] );
+				var jThread = createObject( 'java', 'java.lang.Thread' ).init( jProxy );
+				jthread.start();
+				jThread.join();
+				expect( application.results ).toBe( true );
+			} );
+
 		} );
 	}
 
