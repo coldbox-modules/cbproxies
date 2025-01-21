@@ -28,7 +28,8 @@ component extends="BaseProxy" {
 	}
 
 	function run(){
-		return execute( (struct args ) => {
+		return execute(
+			( struct args ) => {
 				if ( isClosure( variables.target ) || isCustomFunction( variables.target ) ) {
 					variables.target();
 				} else {

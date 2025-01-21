@@ -10,7 +10,8 @@ component extends="Function" {
 	 * I have to use it like this because `super` does not work on ACF in a proxy
 	 */
 	function apply( t ){
-		return execute( (struct args ) => {
+		return execute(
+			( struct args ) => {
 				var oFuture = variables.target( args.t );
 				if (
 					isNull( local.oFuture ) || !isStruct( oFuture ) || !structKeyExists(
@@ -20,7 +21,7 @@ component extends="Function" {
 				) {
 					throw(
 						type    = "IllegalFutureException",
-						message = "The return of the function [#oFuture.getClass().getName() ?: 'null'#] is NOT a ColdBox Future"
+						message = "The return of the function [#oFuture.getClass().getName() ?: "null"#] is NOT a ColdBox Future"
 					);
 				}
 				return local.oFuture.getNative();

@@ -18,7 +18,8 @@ component extends="BaseProxy" {
 	 * Functional interface for the apply functionional interface
 	 */
 	function applyAsDouble( required value ){
-		return execute( (struct args ) => {
+		return execute(
+			( struct args ) => {
 				return variables.target( args.value );
 			},
 			"ToDoubleFunction",

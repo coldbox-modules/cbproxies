@@ -21,7 +21,8 @@ component extends="BaseProxy" {
 	 * @t
 	 */
 	boolean function test( required t ){
-		return execute( (struct args ) => {
+		return execute(
+			( struct args ) => {
 				return variables.target( args.t );
 			},
 			"Predicate",

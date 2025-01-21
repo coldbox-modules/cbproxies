@@ -19,11 +19,13 @@ component extends="BaseProxy" {
 	 * See https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/function/Consumer.html#accept-T-U-
 	 */
 	function accept( required t ){
-		return execute( (struct args ) => {
+		return execute(
+			( struct args ) => {
 				variables.target( args.t );
 			},
 			"Consumer",
 			arguments
 		);
 	}
+
 }

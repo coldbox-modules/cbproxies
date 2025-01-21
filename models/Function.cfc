@@ -28,7 +28,8 @@ component extends="BaseProxy" {
 	 * Represents a function that accepts one argument and produces a result.
 	 */
 	function apply( t ){
-		return execute( (struct args ) => {
+		return execute(
+			( struct args ) => {
 				if ( isNull( args.t ) ) {
 					return variables.target();
 				}
@@ -38,6 +39,5 @@ component extends="BaseProxy" {
 			arguments
 		);
 	}
-
 
 }

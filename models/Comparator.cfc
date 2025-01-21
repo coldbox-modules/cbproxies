@@ -18,13 +18,13 @@ component extends="BaseProxy" {
 	 * Compares its two arguments for order.
 	 */
 	function compare( o1, o2 ){
-		return execute( (struct args ) => {
+		return execute(
+			( struct args ) => {
 				return variables.target( args.o1, args.o2 );
 			},
 			"Comparator",
 			arguments
 		);
 	}
-
 
 }

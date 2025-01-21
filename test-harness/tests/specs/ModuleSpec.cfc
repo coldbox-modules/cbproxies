@@ -42,6 +42,16 @@ component extends="testbox.system.BaseSpec" {
 				expect( results ).toBeTrue();
 			} );
 
+			it( "can create a BinaryOperator", function(){
+				var results = false;
+				var proxy   = new cbproxies.models.BinaryOperator( function( a, b ){
+					results = true;
+				} );
+				var jProxy = createDynamicProxy( proxy, [ "java.util.function.BinaryOperator" ] );
+				jProxy.apply( 1, 2 );
+				expect( results ).toBeTrue();
+			} );
+
 			it( "can create a ToLongFunction", function(){
 				var results = false;
 				var proxy   = new cbproxies.models.ToLongFunction( function( a ){
@@ -171,25 +181,22 @@ component extends="testbox.system.BaseSpec" {
 				var jProxy = createDynamicProxy( proxy, [ "java.util.concurrent.Callable" ] );
 				expect( jProxy.call() ).toBeTrue();
 			} );
-		
 		} );
 
 		describe( "cbproxies threaded execution", function(){
-
 			it( "can create a Runnable in another thread", function(){
 				application.results = false;
 
-				var proxy   = new cbproxies.models.Runnable( function(){
-					createObject( 'java', 'java.lang.System' ).out.println( "Runnable running from thread #createObject( 'java', 'java.lang.Thread' ).currentThread().getName()#" )
+				var proxy = new cbproxies.models.Runnable( function(){
+					createObject( "java", "java.lang.System" ).out.println( "Runnable running from thread #createObject( "java", "java.lang.Thread" ).currentThread().getName()#" )
 					application.results = true;
 				} );
-				var jProxy = createDynamicProxy( proxy, [ "java.lang.Runnable" ] );
-				var jThread = createObject( 'java', 'java.lang.Thread' ).init( jProxy );
+				var jProxy  = createDynamicProxy( proxy, [ "java.lang.Runnable" ] );
+				var jThread = createObject( "java", "java.lang.Thread" ).init( jProxy );
 				jthread.start();
 				jThread.join();
 				expect( application.results ).toBe( true );
 			} );
-
 		} );
 	}
 

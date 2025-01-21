@@ -19,7 +19,8 @@ component extends="BaseProxy" {
 	 * See https://docs.oracle.com/javase/8/docs/api/java/util/function/BiConsumer.html#accept-T-U-
 	 */
 	function accept( t, u ){
-		return execute( (struct args ) => {
+		return execute(
+			( struct args ) => {
 				variables.target( args.t ?: javacast( "null", "" ), args.u ?: javacast( "null", "" ) );
 			},
 			"BiConsumer",

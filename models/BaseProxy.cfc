@@ -49,7 +49,7 @@ component accessors="true" {
 		variables.threadHashCode = getCurrentThread().hashCode();
 
 		variables.isBoxLang = server.keyExists( "boxlang" );
-		variables.isAdobe   = !variables.isBoxLang && server.keyExists( "coldfusion" ) && server.coldfusion.keyExists( "productName" ) &&  server.coldfusion.productName.findNocase( "ColdFusion" ) > 0;
+		variables.isAdobe   = !variables.isBoxLang && server.keyExists( "coldfusion" ) && server.coldfusion.keyExists( "productName" ) && server.coldfusion.productName.findNocase( "ColdFusion" ) > 0;
 		variables.isLucee   = !variables.isBoxLang && server.keyExists( "lucee" );
 
 		// If loading App context or not
@@ -65,7 +65,7 @@ component accessors="true" {
 				variables.originalAppScope      = variables.originalFusionContext.getAppHelper().getAppScope();
 				variables.originalPageContext   = getCFMLContext();
 				variables.originalPage          = variables.originalPageContext.getPage();
-			} else if( variables.isBoxLang ) {
+			} else if ( variables.isBoxLang ) {
 				variables.boxContext = getBoxContext();
 			}
 			// out( "==> Storing contexts for thread: #getCurrentThread().toString()#." );
@@ -75,21 +75,25 @@ component accessors="true" {
 	}
 
 	/**
-	 * Wrapper for the actual execution of each proxy to consolidate logic 
+	 * Wrapper for the actual execution of each proxy to consolidate logic
 	 * and error handling
-	 * 
-	 * @callback The callback to execute (receives the args)
+	 *
+	 * @callback  The callback to execute (receives the args)
 	 * @className The name of the class being executed (for error handling/logging)
-	 * @args The arguments to pass to the callback
+	 * @args      The arguments to pass to the callback
 	 */
-	private function execute( required Function callback, required string className, struct args={} ) {
+	private function execute(
+		required Function callback,
+		required string className,
+		struct args = {}
+	){
 		try {
-			if( isAdobe ) {
-				return executeAdobe( ()=>callback(args) );
-			} else if( isLucee ) {
-				return executeLucee( ()=>callback(args) );
-			} else if( isBoxLang ) {
-				return executeBoxLang( ()=>callback(args) );
+			if ( isAdobe ) {
+				return executeAdobe( () => callback( args ) );
+			} else if ( isLucee ) {
+				return executeLucee( () => callback( args ) );
+			} else if ( isBoxLang ) {
+				return executeBoxLang( () => callback( args ) );
 			} else {
 				throw( "Unsupported CFML engine" );
 			}
@@ -103,28 +107,27 @@ component accessors="true" {
 		}
 	}
 
-	private function executeLucee( required Function callback ) {
-		if( performContextManagement() ) {
+	private function executeLucee( required Function callback ){
+		if ( performContextManagement() ) {
 			getCFMLContext().setApplicationContext( variables.cfContext );
 			// TODO: We're not setting the page context, so no request variables are available.
 			// There were initially issues with thread safety in cloning the page context. We should revisit that.
-		}		
+		}
 		return callback();
 		// Lucee has no "unload" logic
 	}
 
-	private function executeAdobe( required Function callback ) {
+	private function executeAdobe( required Function callback ){
 		/*
-		* Engine-specific lock name. For Adobe, lock is shared for this CFC instance.  On Lucee, it is random (i.e. not locked).
-		* This singlethreading on Adobe is to workaround a thread safety issue in the PageContext that needs fixed.
-		* Amend this check once Adobe fixes this in a later update
-		*/
+		 * Engine-specific lock name. For Adobe, lock is shared for this CFC instance.  On Lucee, it is random (i.e. not locked).
+		 * This singlethreading on Adobe is to workaround a thread safety issue in the PageContext that needs fixed.
+		 * Amend this check once Adobe fixes this in a later update
+		 */
 		lock name="#variables.UUID#" type="exclusive" timeout="60" {
-			if( !performContextManagement() ) {
+			if ( !performContextManagement() ) {
 				return callback();
 			}
 			try {
-				
 				// Set the current thread's class loader from the CF space to avoid
 				// No class defined issues in thread land.
 				getCurrentThread().setContextClassLoader(
@@ -168,11 +171,11 @@ component accessors="true" {
 		}
 	}
 
-	private function executeBoxLang( required Function callback ) {
-		if( !performContextManagement() ) {
+	private function executeBoxLang( required Function callback ){
+		if ( !performContextManagement() ) {
 			return callback();
 		}
-		return runThreadInContext( context=variables.boxContext, callback=arguments.callback );
+		return runThreadInContext( context = variables.boxContext, callback = arguments.callback );
 	}
 
 	/**
@@ -182,8 +185,8 @@ component accessors="true" {
 		return variables.Thread.currentThread();
 	}
 
-	Boolean function performContextManagement() {
-		return variables.loadAppContext &&  variables.threadHashCode != getCurrentThread().hashCode();
+	Boolean function performContextManagement(){
+		return variables.loadAppContext && variables.threadHashCode != getCurrentThread().hashCode();
 	}
 
 	/**
