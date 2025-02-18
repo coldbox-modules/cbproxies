@@ -17,11 +17,11 @@
 
 # cbproxies
 
-The `cbproxies` module is a raw library that allows you to build Java dynamic proxies to several key classes that allows CFML to do concurrency, streaming, and much more.  The `BaseProxy` can also be used so you can extend the module and create your own concrete dynamic proxies that extend the `BaseProxy`.
+The `cbproxies` module is a raw library that allows you to build Java dynamic proxies to several key classes that allows your BoxLang or CFML code to do concurrency, streaming, and much more.  The `BaseProxy` can also be used so you can extend the module and create your own concrete dynamic proxies that extend the `BaseProxy`.
 
 ## BaseProxy
 
-This object is the cornerstone for creatning CFML dynamic proxies that can be used synchronously / asynchronously and keep the CFML environment for you.  Every proxy needs to be created by CFML code:
+This object is the cornerstone for creatning dynamic proxies that can be used synchronously / asynchronously and keep the engine environment for you.  Every proxy needs to be created by the following code:
 
 ```js
 proxy = new cbproxies.models.BiConsumer()
@@ -46,7 +46,7 @@ function init(
 
 * `target` - This can be a closure/function that is stored in the proxy that will later be used by the implemented dynamic proxy call.
 * `debug` - Boolean flag that will enable debuging to console on certain key base proxy areas or by the implementing proxy.
-* `loadAppContext` - This will load up the CFML application context into the proxies scope.  This will allow the Java implementation to talk to anything within the CFML engine: scopes, databases, queries, orm, etc.
+* `loadAppContext` - This will load up the application context into the proxies scope.  This will allow the Java implementation to talk to anything within the BoxLang or CFML engine: scopes, databases, queries, orm, etc.
 
 ## Available Proxies
 
@@ -69,7 +69,8 @@ Here is a table of the available proxies in this module:
 | `ToIntFunction` 		| `java.util.function.ToIntFunction` |
 | `ToLongFunction` 		| `java.util.function.ToLongFunction` |
 
-## System requirements
+## System Requirements
+
 * [Boxlang](https://www.boxlang.io/)
 * Adobe 2018+
 * Lucee 5

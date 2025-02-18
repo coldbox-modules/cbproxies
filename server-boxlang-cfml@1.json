@@ -31,5 +31,6 @@
         "BOXLANG_DEBUG":true
     },
     "scripts":{
+        "onServerInitialInstall":"install bx-compat-cfml --noSave"
     }
 }
