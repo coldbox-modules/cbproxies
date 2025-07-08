@@ -87,23 +87,27 @@ component accessors="true" {
 		required string className,
 		struct args = {}
 	){
-		try {
-			if ( isAdobe ) {
-				return executeAdobe( () => callback( args ) );
-			} else if ( isLucee ) {
-				return executeLucee( () => callback( args ) );
-			} else if ( isBoxLang ) {
-				return executeBoxLang( () => callback( args ) );
-			} else {
-				throw( "Unsupported CFML engine" );
+		var errorWrappedCallback = function(){
+			try {
+				return callback( args );
+			} catch ( any e ) {
+				// Log it, so it doesn't go to ether
+				err( "Error running #className#: #e.message & e.detail#" );
+				err( "Stacktrace for #className#: #e.stackTrace#" );
+				sendExceptionToLogBoxIfAvailable( e );
+				sendExceptionToOnExceptionIfAvailable( e );
+				rethrow;
 			}
-		} catch ( any e ) {
-			// Log it, so it doesn't go to ether
-			err( "Error running #className#: #e.message & e.detail#" );
-			err( "Stacktrace for #className#: #e.stackTrace#" );
-			sendExceptionToLogBoxIfAvailable( e );
-			sendExceptionToOnExceptionIfAvailable( e );
-			rethrow;
+		};
+
+		if ( isAdobe ) {
+			return executeAdobe( () => errorWrappedCallback() );
+		} else if ( isLucee ) {
+			return executeLucee( () => errorWrappedCallback() );
+		} else if ( isBoxLang ) {
+			return executeBoxLang( () => errorWrappedCallback() );
+		} else {
+			throw( "Unsupported CFML engine" );
 		}
 	}
 
