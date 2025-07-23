@@ -15,8 +15,10 @@ on:
 jobs:
   tests:
     uses: ./.github/workflows/tests.yml
+    secrets: inherit
 
-  formatCheck:
+  # Format PR
+  format_check:
     name: Checks Source Code Formatting
     runs-on: ubuntu-latest
     steps:

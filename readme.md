@@ -71,8 +71,8 @@ Here is a table of the available proxies in this module:
 
 ## System Requirements
 
-* [Boxlang](https://www.boxlang.io/)
-* Adobe 2018+
+* [Boxlang](https://www.boxlang.io/) 1+
+* Adobe 2023+
 * Lucee 5
 
 ********************************************************************************
