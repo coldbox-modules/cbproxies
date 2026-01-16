@@ -200,21 +200,11 @@ component extends="testbox.system.BaseSpec" {
 
 
 			it( "can create a Runnable in another thread concurrently", function(){
-				request.brad    = 4;
-				request.count   = 0;
-				variables.stuff = 0;
-				// createObject( "java", "java.lang.System" ).out.println( "processed " & request.count );
-				var proxy       = new cbproxies.models.Consumer( function( i ){
-					// createObject( "java", "java.lang.System" ).out.println( "Consuming [#i#] running from thread #createObject( "java", "java.lang.Thread" ).currentThread().getName()#" )
-					i + request.brad;
-					variables.stuff += i;
-					request.brad = request.brad + 1;
-					var copy     = variables.stuff - 1;
+				var proxy = new cbproxies.models.Consumer( function(i){
 					isDefined( "url.foo" )
 					var test  = url.method ?: "n/a";
 					url.hey   = "ho" & createUUID();
 					var tests = cgi.script_name;
-					request.count++;
 					var jon = "clausen";
 					trim( jon );
 					uCase( jon );
@@ -229,9 +219,9 @@ component extends="testbox.system.BaseSpec" {
 				arr.stream()
 					.parallel()
 					.forEach( jConsumer );
-
-				// createObject( "java", "java.lang.System" ).out.println( "processed " & request.count );
+								
 			} );
+
 		} );
 	}
 
