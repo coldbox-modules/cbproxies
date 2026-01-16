@@ -11,19 +11,22 @@
         "rewrites":{
             "enable":"true"
         },
-		"webroot": "test-harness",
-		"aliases":{
+        "webroot":"test-harness",
+        "aliases":{
             "/moduleroot/cbproxies":"../"
         }
     },
     "jvm":{
-        "heapSize":"1024"
+        "heapSize":"1024",
+        "properties":{
+            "coldfusion.runtime.remotemethod.matchArguments":false
+        }
     },
     "openBrowser":"false",
-	"cfconfig": {
-		"file" : ".cfconfig.json"
-	},
-    "scripts" : {
+    "cfconfig":{
+        "file":".cfconfig.json"
+    },
+    "scripts":{
         "onServerInstall":"cfpm install zip,debugger"
     }
 }

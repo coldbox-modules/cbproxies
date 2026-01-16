@@ -197,6 +197,31 @@ component extends="testbox.system.BaseSpec" {
 				jThread.join();
 				expect( application.results ).toBe( true );
 			} );
+
+
+			it( "can create a Runnable in another thread concurrently", function(){
+				var proxy = new cbproxies.models.Consumer( function(i){
+					isDefined( "url.foo" )
+					var test  = url.method ?: "n/a";
+					url.hey   = "ho" & createUUID();
+					var tests = cgi.script_name;
+					var jon = "clausen";
+					trim( jon );
+					uCase( jon );
+					reverse( jon );
+				} );
+				var jConsumer = createDynamicProxy( proxy, [ "java.util.function.Consumer" ] );
+
+				var arr = [];
+				for ( var i = 1; i <= 10000; i++ ) {
+					arrayAppend( arr, i );
+				}
+				arr.stream()
+					.parallel()
+					.forEach( jConsumer );
+								
+			} );
+
 		} );
 	}
 
