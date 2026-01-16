@@ -184,7 +184,6 @@ component extends="testbox.system.BaseSpec" {
 		} );
 
 		describe( "cbproxies threaded execution", function(){
-			
 			it( "can create a Runnable in another thread", function(){
 				application.results = false;
 
@@ -198,43 +197,41 @@ component extends="testbox.system.BaseSpec" {
 				jThread.join();
 				expect( application.results ).toBe( true );
 			} );
-			
+
 
 			it( "can create a Runnable in another thread concurrently", function(){
-				request.brad = 4;
-				request.count = 0;
+				request.brad    = 4;
+				request.count   = 0;
 				variables.stuff = 0;
-				//createObject( "java", "java.lang.System" ).out.println( "processed " & request.count );
-				var proxy = new cbproxies.models.Consumer( function(i){
-					//createObject( "java", "java.lang.System" ).out.println( "Consuming [#i#] running from thread #createObject( "java", "java.lang.Thread" ).currentThread().getName()#" )
+				// createObject( "java", "java.lang.System" ).out.println( "processed " & request.count );
+				var proxy       = new cbproxies.models.Consumer( function( i ){
+					// createObject( "java", "java.lang.System" ).out.println( "Consuming [#i#] running from thread #createObject( "java", "java.lang.Thread" ).currentThread().getName()#" )
 					i + request.brad;
 					variables.stuff += i;
 					request.brad = request.brad + 1;
-					var copy = variables.stuff-1;
+					var copy     = variables.stuff - 1;
 					isDefined( "url.foo" )
-					var test = url.method ?: 'n/a';
-					url.hey = "ho" & createUUID();
+					var test  = url.method ?: "n/a";
+					url.hey   = "ho" & createUUID();
 					var tests = cgi.script_name;
 					request.count++;
 					var jon = "clausen";
 					trim( jon );
-					ucase( jon );
+					uCase( jon );
 					reverse( jon );
 				} );
-				var jConsumer  = createDynamicProxy( proxy, [ "java.util.function.Consumer" ] );
-				
+				var jConsumer = createDynamicProxy( proxy, [ "java.util.function.Consumer" ] );
+
 				var arr = [];
-				for( var i=1; i <= 10000; i++ ){
+				for ( var i = 1; i <= 10000; i++ ) {
 					arrayAppend( arr, i );
 				}
 				arr.stream()
 					.parallel()
 					.forEach( jConsumer );
-				
-				//createObject( "java", "java.lang.System" ).out.println( "processed " & request.count );
-				
-			} );
 
+				// createObject( "java", "java.lang.System" ).out.println( "processed " & request.count );
+			} );
 		} );
 	}
 

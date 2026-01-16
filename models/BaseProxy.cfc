@@ -128,9 +128,7 @@ component accessors="true" {
 		try {
 			// Set the current thread's class loader from the CF space to avoid
 			// No class defined issues in thread land.
-			getCurrentThread().setContextClassLoader(
-				variables.originalFusionContext.getClass().getClassLoader()
-			);
+			getCurrentThread().setContextClassLoader( variables.originalFusionContext.getClass().getClassLoader() );
 
 			// Prepare a new context in ACF for the thread
 			var fusionContext = variables.originalFusionContext.clone();
