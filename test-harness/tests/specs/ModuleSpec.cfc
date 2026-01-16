@@ -200,12 +200,12 @@ component extends="testbox.system.BaseSpec" {
 
 
 			it( "can create a Runnable in another thread concurrently", function(){
-				var proxy = new cbproxies.models.Consumer( function(i){
+				var proxy = new cbproxies.models.Consumer( function( i ){
 					isDefined( "url.foo" )
 					var test  = url.method ?: "n/a";
 					url.hey   = "ho" & createUUID();
 					var tests = cgi.script_name;
-					var jon = "clausen";
+					var jon   = "clausen";
 					trim( jon );
 					uCase( jon );
 					reverse( jon );
@@ -219,9 +219,7 @@ component extends="testbox.system.BaseSpec" {
 				arr.stream()
 					.parallel()
 					.forEach( jConsumer );
-								
 			} );
-
 		} );
 	}
 
